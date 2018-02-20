@@ -12,6 +12,7 @@ Basic Echobot example, repeats messages.
 Press Ctrl-C on the command line or send a signal to the process to stop the
 bot.
 """
+from telegram import *
 from random import *
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import logging
@@ -37,9 +38,15 @@ def start(bot, update):
     """Send a message when the command /start is issued."""
     global exersize_result
     global exersize_str
+    custom_keyboard = [[KeyboardButton(text="Minus")],[KeyboardButton(text="Plus")]]
+    reply_markup = ReplyKeyboardMarkup(custom_keyboard)
+    bot.send_message(chat_id=update.message.chat.id, text="I'm back.", reply_markup=reply_markup)
     exersize_result,exersize_str = get_minus_exersize()
     update.message.reply_text("Пример: "+exersize_str)
 
+def key_pressed(bot, update):
+    """Send a message when the command /help is issued."""
+    update.message.reply_text('Key!')
 
 def help(bot, update):
     """Send a message when the command /help is issued."""
@@ -80,6 +87,7 @@ def main():
 
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler('key', key_pressed))
     dp.add_handler(CommandHandler("help", help))
 
     # on noncommand i.e message - echo the message on Telegram
