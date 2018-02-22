@@ -39,6 +39,9 @@ def get_plus_exercise():
     b=1+int(random()*(a-1))
     return a+b,str(a)+"+"+str(b)+"="
 
+def unknown_exercise():
+    return -1,"🗣Please select an exercise type👆"
+
 def new_question(bot,update):
     check_new_chat(bot, update)
     settings = settings_dict[update.message.chat.id]
@@ -77,19 +80,18 @@ def check_new_chat(bot, update):
     if update.message.chat.id not in settings_dict:
         new_settings = {}
         settings_dict[update.message.chat.id]=new_settings
-        new_settings["func"] = lambda: -1,"Please select exercise type!"
-        new_settings["result"]=0
-        new_settings["exercise_str"]=""
+        new_settings["func"] = unknown_exercise
+        new_settings["result"]=unknown_exercise()[0]
+        new_settings["exercise_str"]= unknown_exercise()[1]
         return True
     return False
     
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
 def start(bot, update):
-    """Send a message when the command /start is issued."""
-    global settings_dict    
+    """Send a message when the command /start is issued."""   
     send_keyboard(bot, update)
-    update.message.reply_text("Please select exercise type!")
+
        
 
 def plus_pressed(bot, update):
@@ -115,6 +117,7 @@ def echo(bot, update):
     """Echo the user message."""
     if check_new_chat(bot, update):
         ask_question(bot,update)
+        start(bot,update)
     else:
            check_result(bot,update)
 
